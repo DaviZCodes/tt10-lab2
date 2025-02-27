@@ -5,7 +5,7 @@
 
 `default_nettype none
 
-module tt_um_example (
+module tt_um_lab2 (
     input  wire [7:0] ui_in,    // Dedicated inputs
     output wire [7:0] uo_out,   // Dedicated outputs
     input  wire [7:0] uio_in,   // IOs: Input path
@@ -17,7 +17,34 @@ module tt_um_example (
 );
 
   // All output pins must be assigned. If not used, assign to 0.
-  assign uo_out  = ui_in + uio_in;  // Example: ou_out is the sum of ui_in and uio_in
+
+    wire [15:0] In = {ui_in, uio_in}; // We're gonna have ui_in and uio_in as 16-bit 
+    reg  [7:0]  C; // Output of the priority encoder 
+
+    always @(*) begin
+        casez (In)  
+            16'b0000000000000001: C = 8'd0;
+            16'b000000000000001?: C = 8'd1;
+            16'b00000000000001??: C = 8'd2;
+            16'b0000000000001???: C = 8'd3;
+            16'b000000000001????: C = 8'd4;
+            16'b00000000001?????: C = 8'd5;
+            16'b0000000001??????: C = 8'd6;
+            16'b000000001???????: C = 8'd7;
+            16'b00000001????????: C = 8'd8;
+            16'b0000001?????????: C = 8'd9;
+            16'b000001??????????: C = 8'd10;
+            16'b00001???????????: C = 8'd11;
+            16'b0001????????????: C = 8'd12;
+            16'b001?????????????: C = 8'd13;
+            16'b01??????????????: C = 8'd14;
+            16'b1???????????????: C = 8'd15;
+            default:              
+                C = 8'b11110000; 
+        endcase
+    end
+    
+  assign uo_out  = C;  // Example: ou_out is the priority encoder 
   assign uio_out = 0;
   assign uio_oe  = 0;
 
